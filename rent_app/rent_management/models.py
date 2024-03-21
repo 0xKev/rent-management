@@ -76,7 +76,7 @@ class ReferencePerson(models.Model):
     first_name = models.CharField(max_length=10)
     last_name = models.CharField(max_length=10, blank=True, null=True)
     phone_num = models.CharField(max_length=12, blank=True, null=True)
-    email = models.CharField(max_length=80, blank=True, null=True)
+    email = models.EmailField(max_length=80, blank=True, null=True)
     relationship = models.CharField(max_length=10, blank=True, null=True)
 
     def __str__(self):

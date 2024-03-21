@@ -19,6 +19,7 @@ class PropertyListView(generic.ListView):
 def create_property(request):
     if request.method == 'POST':
         form = PropertyCreateForm(request.POST)
+        address_pk = reverse('address-create', args=[str.id)])
         if form.is_valid():
             form.save()
             return redirect('rent_management:properties')
