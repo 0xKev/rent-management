@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Property Listings</title>
+    <link rel="stylesheet" href="style.css">  </head>
+<body>
+    <h1>All Properties</h1>
+
+    <ul>
+        {% for property in properties %}
+            <li>
+                <h2>{{ property.name }}</h2>
+                <p><strong>Type:</strong> {{ property.type.capitalize }} 
+                    {% if property.type == None %}
+                        ({{ property.other_type }})
+                    {% endif %}
+                </p>
+                <p><strong>Status:</strong> {{ property.get_status_display }}</p>
+                <p><strong>Address:</strong> {{ property.address }}</p>  
+                {% if property.description %}
+                    <p><strong>Description:</strong> {{ property.description }}</p> 
+                {% endif %}
+                <p><strong>Payment Frequency:</strong> {{ property.get_payment_freq_display }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+    <a href="{% url 'rent_management:property-create' %}"><button>Create property</button></a>
+</html>
