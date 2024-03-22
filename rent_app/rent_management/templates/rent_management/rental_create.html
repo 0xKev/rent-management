@@ -1,11 +1,25 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <h1>Create rental below</h1>
-    </head>
-    <body>
-        {{ form.as_p }}
-    </body>
-    <a href="{% url 'rent_management:rental-create' %}"><button>Create Rental</button></a>
-    <a href="{% url 'rent_management:properties' %}"><button>View properties</button></a>
+<head>
+    <title>Create Rental</title>
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+    <h1>Create Rental</h1>
+
+    <form method="POST">
+        {% csrf_token %} 
+
+        {% for field in form %}  
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                {{ field }}
+            </div>
+        {% endfor %}
+
+        <button type="submit">Create Rental</button>
+    </form>
+
+    <a href="{% url 'rent_management:properties' %}"><button>View Properties</button></a>
+</body>
 </html>

@@ -63,16 +63,12 @@ class Property(models.Model):
     def get_payment_freq(self):
         return self.payment_freq
     
-
-    
     def clean(self): # for data integrity when modifying existing Property objects
         if self.pk is None: # check if clean() is being called during creation, return if true
             return
         if Rental.objects.filter(property=self).exists(): # check if any rental class property references this property 'self'
             if self.status != 'rented':
                 raise ValidationError("Status can't be changed while property is rented.")
-
-
 
     def __str__(self):
         return f"{self.name}: {self.type} - {self.get_status_display()} " 
@@ -86,18 +82,18 @@ class ReferencePerson(models.Model):
     relationship = models.CharField(max_length=10, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.first_name} {self.last_last}"
+        return f"{self.first_name} {self.last_name}"
 
 class Tenant(models.Model):
     first_name = models.CharField(max_length=10)
-    last_last = models.CharField(max_length=10)
+    last_name = models.CharField(max_length=10)
     phone_num = models.CharField(max_length=12, blank=True, null=True)
     email = models.CharField(max_length=80, blank=True, null=True)
     address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True)
     reference = models.ForeignKey(ReferencePerson,on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.first_name} {self.last_last}"
+        return f"{self.first_name} {self.last_name}"
 
 class Rental(models.Model):
     BILLING_CYCLE = (
@@ -115,16 +111,6 @@ class Rental(models.Model):
     rent = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
     rental_freq = models.CharField(max_length=13, choices=BILLING_CYCLE, default="monthly")
     description = models.CharField(max_length=50, null=True, blank=True)
-
-    
-    def save(self, *args, **kwargs): # updates lease duration and rent whenever Rental class is saved
-        self.lease_duration = self.lease_end_date - self.lease_start_date # 
-        self.rent = self.property.rent
-        super().save(*args, **kwargs)
-
-        if not self.property.status != "rented":
-            self.property.status = 'rented'
-            self.property.save()
 
     def __str__(self):
         return f"{self.property.name} - ({self.property.type}: {self.tenant.first_name} + {self.tenant.last_name})"

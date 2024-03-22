@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rental List</title>
+    <link rel="stylesheet" href="style.css"> 
+</head>
+
+<body>
+    <h1>My Rentals</h1>
+
+    {% if rentals %} 
+        <ul>
+            {% for rental in rentals %}
+                <li>
+                    Property: {{ rental.property.name }} <br>
+                    Tenant: {{ rental.tenant.first_name }} {{ rental.tenant.last_name }} <br>
+                    Lease Period: {{ rental.lease_start_date }} - {{ rental.lease_end_date }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You don't have any rentals yet.</p>
+    {% endif %}
+
+    <a href="{% url 'rent_management:rental-create' %}"><button>Create New Rental</button></a>
+</body>
+</html>

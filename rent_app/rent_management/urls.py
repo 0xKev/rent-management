@@ -12,5 +12,6 @@ urlpatterns = [
     path("create-property", views.create_property, name='property-create'),
     path("create-address", views.create_address, name='address-create'),
     path("view-address/", views.AddressListView.as_view(), name="address-list"),
-    path("create-rental", views.create_rental, name="rental-create")
+    path("create-rental", views.create_rental, name="rental-create"),
+    path("view-rentals/", views.RentalListView.as_view(), name="rental-list")
 ]
