@@ -1,0 +1,91 @@
+ROADMAP
+
+
+Part 1
+    Models:
+
+    Property
+    Tenant 
+    ReferencePerson (tied to Tenant)
+    Address (tied to Property)
+    Rental (tied to Property and Tenant)
+    Expenses (tied to Property)
+    Payment (tied to Property)
+    OtherTransactions [Keeps track of total earnings, expenses, dues and deposits.] [Also keep track per Property] (tied to Property)
+
+    CRUD for all Models and generic class based views when possible.
+
+Part 2
+    Core Functions:
+
+    Lease Management
+        - Ties Property and Tenant (ReferencePerson) into Rental
+        - Fields such as
+            Rental:
+                - Billing cycle
+                - Lease dates
+                - Rental Frequency
+                - Rent Amount
+            Increment & Deposit: [Optional toggle]
+                - Rent Increment (Annually) [In percentage]
+                - Deposit
+            Lease Breakage Details: [Optional toggle]
+                - Tenant Breakage (1 - 3 Months selection)
+                - Owner Breakage (1 - 3 Months selection)
+            Description:
+                - Description box for notes/remarks with a max of 50 characters.
+
+    Finances Tracking:
+
+    Payment Model to represent payment transactions with fields such as:
+        Payment Information:
+            - Amount (USD)
+            - Date Paid
+        Description:
+            - Description box for notes/remarks with a max of 50 characters.
+        TBD:
+            - Calculate late fees
+
+    Expenses Model to represent expenses transactions with fields such as:
+        Details:
+            - Asset (Select one from Property)
+            - Type (Repair, Electric Repair, other) [Seleting other allows user to manually input type]
+        Rate Details:
+            - Amount (USD)
+            - Date Paid
+        Description:
+            - Description box for notes/remarks with a max of 50 characters.
+
+    Reporting:
+
+    Model not necessary. Only need to summarize data.
+    Fields such as:
+        Report Type:
+            - Generate Report (Rent Receipt, Tenant Report, Asset Report)
+        
+        Rent Receipt:
+            - Tenant (Select one from Tenant)
+            - Asset (Select one from Property)
+            - Start and end date
+                - Allow user to also toggle to get full receipt from start til today
+        
+        Tenant Report:
+            - Active renting tenants only (Toggle on off)
+            - Select between (Individual or All)
+            - If Individual, select one from Tenant
+        
+        Asset Report:
+            - Active renting assets only (Toggle on off)
+            - Select between (Individual or All)
+            - If Individual, select one from Asset
+
+Part 3:
+    TBD
+
+Current goals:
+    - Implement REST framework
+
+
+
+
+
