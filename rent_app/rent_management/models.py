@@ -63,10 +63,16 @@ class Property(models.Model):
     def get_payment_freq(self):
         return self.payment_freq
     
-    def clean(self):
+
+    
+    def clean(self): # for data integrity when modifying existing Property objects
+        if self.pk is None: # check if clean() is being called during creation, return if true
+            return
         if Rental.objects.filter(property=self).exists(): # check if any rental class property references this property 'self'
             if self.status != 'rented':
                 raise ValidationError("Status can't be changed while property is rented.")
+
+
 
     def __str__(self):
         return f"{self.name}: {self.type} - {self.get_status_display()} " 

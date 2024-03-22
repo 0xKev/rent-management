@@ -1,5 +1,5 @@
 from django.forms import ModelForm, forms
-from .models import Property, Address
+from .models import Property, Address, Rental
 from django.core.exceptions import ValidationError
 
 class PropertyCreateForm(ModelForm):
@@ -10,4 +10,9 @@ class PropertyCreateForm(ModelForm):
 class AddressCreateForm(ModelForm):
     class Meta:
         model = Address
+        fields = '__all__'
+
+class RentalCreateForm(ModelForm):
+    class Meta:
+        model = Rental
         fields = '__all__'

@@ -9,6 +9,7 @@
     <h1>Create New Property</h1>
     <form method="post">
         {% csrf_token %}  {{ form.as_p }}   <button type="submit">Create</button>
+        <a href="{% url 'rent_management:properties' %}"><button>View all properties</button></a>
     </form>
 </body>
 </html>

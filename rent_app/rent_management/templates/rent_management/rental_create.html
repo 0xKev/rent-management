@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <h1>Create rental below</h1>
+    </head>
+    <body>
+        {{ form.as_p }}
+    </body>
+    <a href="{% url 'rent_management:rental-create' %}"><button>Create Rental</button></a>
+    <a href="{% url 'rent_management:properties' %}"><button>View properties</button></a>
+</html>

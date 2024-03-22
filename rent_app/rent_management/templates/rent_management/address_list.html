@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Address Details</title>
+</head>
+<body>
+    <h1>Address</h1>
+
+    <p><strong>Country:</strong> {{ addresses.country }}</p>
+    <p><strong>State:</strong> {{ addresses.state }}</p>
+    <p><strong>City:</strong> {{ addresses.city }}</p>
+    <p><strong>Address Line 1:</strong> {{ addresses.line1 }}</p>
+    {% if addresses.line2 %}
+        <p><strong>Address Line 2:</strong> {{ addresses.line2 }}</p>
+    {% endif %}
+    <p><strong>Zipcode:</strong> {{ addresses.zipcode }}</p>
+    <a href="{% url 'rent_management:properties' %}"><button>View all properties</button></a>
+
+</body>
+</html>
