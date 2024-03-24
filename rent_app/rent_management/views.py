@@ -4,8 +4,14 @@ from django.shortcuts import render, get_list_or_404, redirect
 from django.urls import reverse
 from django.views import generic
 from .forms import PropertyCreateForm, AddressCreateForm, RentalCreateForm
+from django.db import transaction
 
 from .models import Property, Address, Rental, Tenant
+
+#### for Django Rest Framework
+from .serializers import PropertySerializer, AddressSerializer, RentalSerializer
+from rest_framework import viewsets, status
+from rest_framework.response import Response
 
 # Create your views here.
 class PropertyListView(generic.ListView):
@@ -83,4 +89,25 @@ def create_address(request):
     return render(request, 'rent_management/address_create.html', {'form': form})
     
 
+class PropertyViewSet(viewsets.ModelViewSet):
+    # DRF view handles the API requests
+    queryset = Property.objects.all()
+    serializer_class = PropertySerializer
 
+class AddressViewSet(viewsets.ModelViewSet):
+    queryset = Address.objects.all()
+    serializer_class = AddressSerializer
+
+class RentalViewSet(viewsets.ModelViewSet):
+    queryset = Rental.objects.all()
+    serializer_class = RentalSerializer
+
+    
+
+    def destroy(self, request, *args, **kwargs):
+        rental_obj = self.get_object()
+        rental_obj.property.status = "available"
+        rental_obj.property.save()
+        rental_obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    

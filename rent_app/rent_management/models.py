@@ -21,7 +21,7 @@ class Address(models.Model):
                  {self.line2}\n\
                  {self.city} {self.state} {self.zipcode}\n\
                  {self.country}"
-
+# MAKE SURE PROPERTY CAN ONLY BE RENTED ONCE! IF STATUS == RENTED, CAN'T CREATE RENTAL WITH IT
 class Property(models.Model):
     class Meta:
         verbose_name_plural = "Properties" # used to have Property show up in admin page as properties and not propertys
@@ -37,11 +37,11 @@ class Property(models.Model):
         ('other', 'Other')
     )
     PROPERTY_STATUS = (
-        ('rented', 'Rented'),
         ('available', 'Available'),
         ('under service', 'Under Service'),
         ('unavailable', 'Unavailable'),
         ('sold out', 'Sold Out'),
+        ('rented', 'Rented'),
     )
     BILLING_CYCLE = (
         ('daily', 'Daily'),
@@ -108,9 +108,9 @@ class Rental(models.Model):
     lease_start_date = models.DateField(default=timezone.now())
     lease_end_date = models.DateField(default=timezone.now() + timedelta(days=30))
     lease_duration = models.DurationField(blank=True, null=True, default=timedelta(days=30))
-    rent = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
+    rent = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
     rental_freq = models.CharField(max_length=13, choices=BILLING_CYCLE, default="monthly")
     description = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.property.name} - ({self.property.type}: {self.tenant.first_name} + {self.tenant.last_name})"
+        return f"{self.property.name} - ({self.property.type}: {self.tenant.first_name} {self.tenant.last_name}: {self.property.status})"
