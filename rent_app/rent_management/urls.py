@@ -7,6 +7,7 @@ router = routers.DefaultRouter()
 router.register(r'properties', views.PropertyViewSet, basename="property-api")
 router.register(r'addresses', views.AddressViewSet, basename="address-api") # using just 'address' conflicts with path 'address-list bc router auto generates various urls
 router.register(r'rentals', views.RentalViewSet, basename="rental-api")
+router.register(r'tenants', views.TenantViewSet, basename="tenant-api")
 
 
 app_name = "rent_management"

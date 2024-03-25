@@ -1,6 +1,6 @@
 from typing import Any
 from django.db.models.query import QuerySet
-from django.shortcuts import render, get_list_or_404, redirect
+from django.shortcuts import render, get_list_or_404, redirect, get_object_or_404
 from django.urls import reverse
 from django.views import generic
 from .forms import PropertyCreateForm, AddressCreateForm, RentalCreateForm
@@ -9,9 +9,13 @@ from django.db import transaction
 from .models import Property, Address, Rental, Tenant
 
 #### for Django Rest Framework
-from .serializers import PropertySerializer, AddressSerializer, RentalSerializer
+from .serializers import PropertySerializer, AddressSerializer, RentalSerializer, TenantSerializer
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.serializers import ValidationError
+
+### permissions.py for development and production ###
+from .permissions import DevelopmentModelPermission, get_custom_permissions
 
 # Create your views here.
 class PropertyListView(generic.ListView):
@@ -22,6 +26,9 @@ class PropertyListView(generic.ListView):
         properties = Property.objects.all()
         return properties
     
+    def get_permissions(self):
+        return get_custom_permissions(self.request)
+    
 class AddressListView(generic.ListView):
     template_name = "rent_management/address_list.html"
     context_object_name = "addresses"
@@ -30,6 +37,9 @@ class AddressListView(generic.ListView):
         addresses = Address.objects.all()
         return addresses
     
+    def get_permissions(self):
+        return get_custom_permissions(self.request)
+    
 class RentalListView(generic.ListView):
     template_name = "rent_management/rental_list.html"
     context_object_name = "rentals"
@@ -37,6 +47,9 @@ class RentalListView(generic.ListView):
     def get_queryset(self):
         rentals = Rental.objects.all()
         return rentals
+    
+    def get_permissions(self):
+        return get_custom_permissions(self.request)
     
 def create_rental(request):
     if request.method == "POST":
@@ -94,16 +107,39 @@ class PropertyViewSet(viewsets.ModelViewSet):
     queryset = Property.objects.all()
     serializer_class = PropertySerializer
 
+    def get_permissions(self):
+        return get_custom_permissions(self.request)
+
 class AddressViewSet(viewsets.ModelViewSet):
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
+
+    def get_permissions(self):
+        return get_custom_permissions(self.request)
 
 class RentalViewSet(viewsets.ModelViewSet):
     queryset = Rental.objects.all()
     serializer_class = RentalSerializer
 
-    
+    @transaction.non_atomic_requests
+    def create(self, request,  *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            # get property instance
+            property_data = serializer.validated_data.get('property')
+            property_id = property_data.id
+            property_obj = get_object_or_404(Property, id=property_id)
 
+            if property_obj.status == 'available':
+                rental = self.perform_create(serializer)
+                property_obj.status = 'rented' 
+                property_obj.save()
+
+                headers = self.get_success_headers(serializer.data)
+                return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            else:
+                raise ValidationError("Property has already been rented!")
+            
     def destroy(self, request, *args, **kwargs):
         rental_obj = self.get_object()
         rental_obj.property.status = "available"
@@ -111,3 +147,9 @@ class RentalViewSet(viewsets.ModelViewSet):
         rental_obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
+    def get_permissions(self):
+        return get_custom_permissions(self.request)
+    
+class TenantViewSet(viewsets.ModelViewSet):
+    queryset = Tenant.objects.all()
+    serializer_class = TenantSerializer

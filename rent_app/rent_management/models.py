@@ -4,6 +4,10 @@ from datetime import timedelta
 from django import forms
 from django.core.exceptions import ValidationError
 
+# for token authentication #
+from rest_framework.authtoken.models import Token
+
+
 # Create your models here.
 class Address(models.Model):
     class Meta:
