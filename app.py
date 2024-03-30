@@ -8,6 +8,7 @@ TENANTS_ENDPOINT = BASE_URL + "tenants/"
 ADDRESSES_ENDPOINT = BASE_URL + "addresses/"
 RENTALS_ENDPOINT = BASE_URL + "rentals/"
 
+# combine get funcs into a generic fetch by passing endpoint as parameter and use dict/list
 
 def get_properties(id=None):
     try:
@@ -19,7 +20,6 @@ def get_properties(id=None):
     except requests.exceptions.RequestException as err:
         return err
         
-
 def get_tenants(id=None):
     try:
         if id is None:
@@ -49,13 +49,26 @@ def get_rentals(id=None):
         return response.json()
     except requests.exceptions.RequestException as err:
         return err
+    
+def del_backend_data(endpoint: str, id: int) -> None:
+    try:
+        requests.delete(endpoint + str(id))
+    except requests.exceptions.RequestException as err:
+        return err
 
-def fetch_results(asset: str = None) -> dict:
+def fetch_results(asset: str = None) -> list:
     #choice = st.selectbox("Menu", list(menu.keys()))
     perform_action = list(menu[choice].keys())[0]
 
     results = menu[choice][perform_action](asset)
     return results
+
+def fetch_available_assets(all_assets: list) -> list:
+    filtered_assets = []
+    for asset in all_assets:
+        if asset["status"] != "rented":
+            filtered_assets.append(asset)
+    return filtered_assets
 
 def filter_rentals(search_name: str) -> list:    # only called on Rentals menu selection
     st.markdown(
@@ -113,6 +126,7 @@ else:  # User has entered "please", proceed with the app
 
     if choice == "Properties":
         results = fetch_results()
+        del_btn_counter = 0
         
         for property in results: # let each property be a pop up menu that allows for modications
             st.markdown(
@@ -129,19 +143,25 @@ else:  # User has entered "please", proceed with the app
             </style>
             """, unsafe_allow_html=True # in order to align right column to the right
             )
+            del_btn_counter += 1
             with st.container(border=True):
                 col1, col2 = st.columns(2)
                 
                 with col1:
-                    st.write(f"Property ID: {property['name']}")
+                    st.write(f"Property ID: {property['id']}")
                     st.write(f"Property Name: {property['name']}")
 
                 with col2:
                     st.write(f"Property Address: {property['address']}")
                     st.write(f"Property Status: {property['status']}")
+                
+                if st.button("Delete", key=f"delete_property_{del_btn_counter}"):
+                    del_backend_data(PROPERTIES_ENDPOINT, property["id"])
+                    st.rerun()
     
     if choice == "Rentals":
         asset_search = st.text_input("Search for an asset or property by name:", on_change=lambda: None)
+        key_counter = 0
 
         if asset_search:
             results = filter_rentals(asset_search)
@@ -165,6 +185,8 @@ else:  # User has entered "please", proceed with the app
             )
             property_data = get_properties(rental["property"])
 
+            key_counter += 1
+
             with st.container(border=True):
                 col1, col2 = st.columns(2)
 
@@ -179,7 +201,19 @@ else:  # User has entered "please", proceed with the app
                     st.write("Paid: ")
                     st.write("Due: ")
 
+                with st.expander("Update Rental"):
+                    with st.form(key=f"update_rental{key_counter}"):
+                        submitted = st.form_submit_button("Update")
+                    if st.button("Delete", key=f"delete_btn_{key_counter}"):
+                        del_backend_data(RENTALS_ENDPOINT, id=rental["id"])
+                        st.rerun()
+
+                with st.popover(":orange[Add Expense]"):
+                    st.write("This area will be used for the expenses form")
                 
+                with st.popover(":blue[Add Payment]"):
+                    st.write("This area will be used for the payment form")
+
     if choice == "Tenants":
         results = fetch_results()
 
@@ -211,3 +245,4 @@ else:  # User has entered "please", proceed with the app
 
     if choice == "Addresses":
         name = st.text_input("Enter words:")
+        
