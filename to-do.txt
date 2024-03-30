@@ -84,6 +84,20 @@ Part 3:
 
 Current goals:
     - Implement REST framework
+    - Continue with streamlit for frontend
+        - Python Kivy for Android
+    - User authentication, currently no auth while development
+        - Might have to redo database
+    - Implement more django transactions to prevent partial data modifications
+
+To test:
+    - Random user inputs breaking functions
+
+
+To do after developing:
+    - MUST ENABLE auth
+        - MUST CHANGE permissions.py (DevelopmentModelPermission)
+    
 
 
 # MAKE SURE PROPERTY CAN ONLY BE RENTED ONCE! IF STATUS == RENTED, CAN'T CREATE RENTAL WITH IT (done)

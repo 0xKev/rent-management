@@ -153,3 +153,6 @@ class RentalViewSet(viewsets.ModelViewSet):
 class TenantViewSet(viewsets.ModelViewSet):
     queryset = Tenant.objects.all()
     serializer_class = TenantSerializer
+
+    def get_permissions(self):
+        return get_custom_permissions(self.request)
