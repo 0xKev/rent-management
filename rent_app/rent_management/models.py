@@ -75,7 +75,7 @@ class Property(models.Model):
                 raise ValidationError("Status can't be changed while property is rented.")
 
     def __str__(self):
-        return f"{self.name}: {self.type} - {self.get_status_display()} " 
+        return f"{self.name}: {self.type} - [{self.get_status_display()}]" 
         
 
 class ReferencePerson(models.Model):
@@ -109,12 +109,51 @@ class Rental(models.Model):
     )
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
     tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
-    lease_start_date = models.DateField(default=timezone.now())
+    lease_start_date = models.DateField(default=timezone.now)
     lease_end_date = models.DateField(default=timezone.now() + timedelta(days=30))
     lease_duration = models.DurationField(blank=True, null=True, default=timedelta(days=30))
-    rent = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
+    rent = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     rental_freq = models.CharField(max_length=13, choices=BILLING_CYCLE, default="monthly")
     description = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
         return f"{self.property.name} - ({self.property.type}: {self.tenant.first_name} {self.tenant.last_name}: {self.property.status})"
+
+class Expense(models.Model):
+    REPAIR_TYPES = (
+        ('repair', 'Repair'),
+        ('electric_repair', 'Electric Repair'),
+        ('other', 'Other')
+    )
+
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    repair_type = models.CharField(max_length=20, choices=REPAIR_TYPES, default='repair')
+    payment_amount = models.DecimalField(default=0.00, decimal_places=2, max_digits=10)
+    date_paid = models.DateField(default=timezone.now)
+    description = models.CharField(max_length=50, blank=True, null=True)
+
+    def get_total_expenses():
+        try:
+            total = Expense.objects.all().aggregate(sum("payment_amount"))["payment_amount__sum"] or 0
+            return total
+        except:
+            return 0
+
+    def __str__(self):
+        return f"{self.property} (cost ${self.payment_amount})"
+
+class Payment(models.Model):
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    payment_amount = models.DecimalField(default=0.00, decimal_places=2, max_digits=10)
+    date_paid = models.DateField(default=timezone.now)
+    description = models.CharField(max_length=50, blank=True, null=True)
+
+    def get_total_payments():
+        try:
+            total = Payment.objects.all().aggregate(sum(("payment_amount")))["payment_amount__sum"] or 0
+            return total
+        except:
+            return 0
+    
+    def __str__(self):
+        return f"{self.property} (profit ${self.payment_amount})"

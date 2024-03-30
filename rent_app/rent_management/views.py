@@ -6,10 +6,10 @@ from django.views import generic
 from .forms import PropertyCreateForm, AddressCreateForm, RentalCreateForm
 from django.db import transaction
 
-from .models import Property, Address, Rental, Tenant
+from .models import Property, Address, Rental, Tenant, Payment, Expense
 
 #### for Django Rest Framework
-from .serializers import PropertySerializer, AddressSerializer, RentalSerializer, TenantSerializer
+from .serializers import PropertySerializer, AddressSerializer, RentalSerializer, TenantSerializer, TotalTransactionsSerializer, PaymentSerializer, ExpenseSerializer
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
@@ -156,3 +156,38 @@ class TenantViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         return get_custom_permissions(self.request)
+
+class PaymentViewSet(viewsets.ModelViewSet):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
+
+    def get_permissions(self):
+        return get_custom_permissions(self.request)
+    
+class ExpenseViewSet(viewsets.ModelViewSet):
+    queryset = Expense.objects.all()
+    serializer_class = ExpenseSerializer
+
+    def get_permissions(self):
+        return get_custom_permissions(self.request)
+
+class TotalTransactionsViewSet(viewsets.ModelViewSet):
+    queryset = None
+    serializer_class = TotalTransactionsSerializer
+
+    def get_permissions(self):
+        return get_custom_permissions(self.request)
+    
+    def list(self, request):
+        total_payments = Payment.get_total_payments()
+        total_expenses = Expense.get_total_expenses()
+
+        serializer = TotalTransactionsSerializer(data={
+            "total_payments": total_payments,
+            "total_expenses": total_expenses,
+        })
+        
+        serializer.is_valid()
+        return Response(serializer.data)
+    
+    # viewset only used for fetching total finiances, DO NOT ALLOW MODIFICATIONS, no 'create' method
