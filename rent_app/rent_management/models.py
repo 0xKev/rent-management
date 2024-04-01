@@ -126,7 +126,7 @@ class Expense(models.Model):
         ('other', 'Other')
     )
 
-    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    rental = models.ForeignKey(Rental, on_delete=models.CASCADE)
     repair_type = models.CharField(max_length=20, choices=REPAIR_TYPES, default='repair')
     payment_amount = models.DecimalField(default=0.00, decimal_places=2, max_digits=10)
     date_paid = models.DateField(default=timezone.now)
@@ -140,10 +140,10 @@ class Expense(models.Model):
             return 0
 
     def __str__(self):
-        return f"{self.property} (cost ${self.payment_amount})"
+        return f"{self.rental} (cost ${self.payment_amount})"
 
 class Payment(models.Model):
-    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    rental = models.ForeignKey(Rental, on_delete=models.CASCADE)
     payment_amount = models.DecimalField(default=0.00, decimal_places=2, max_digits=10)
     date_paid = models.DateField(default=timezone.now)
     description = models.CharField(max_length=50, blank=True, null=True)
@@ -156,4 +156,4 @@ class Payment(models.Model):
             return 0
     
     def __str__(self):
-        return f"{self.property} (profit ${self.payment_amount})"
+        return f"{self.rental} (profit ${self.payment_amount})"

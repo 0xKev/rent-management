@@ -50,6 +50,12 @@ def get_rentals(id=None):
     except requests.exceptions.RequestException as err:
         return err
     
+def create_backend_data(endpoint: str, payload_data: dict):
+    headers = {"Content-Type": "application/json"}
+    response = requests.post(url=endpoint, data=payload_data, headers=headers)
+    if response != 201:
+        print("Error with POST request:", response.text)
+ 
 def del_backend_data(endpoint: str, id: int) -> None:
     try:
         requests.delete(endpoint + str(id))
@@ -121,9 +127,40 @@ else:  # User has entered "please", proceed with the app
     with st.sidebar:
         choice = st.selectbox("Menu", list(menu.keys()))
         perform_action = list(menu[choice].keys())[0]
-        if st.button(perform_action, key="temp"):
+        if st.button(perform_action, key="show-json"):
             st.write(fetch_results())
+        
+        # create property but ideally dynamic
+        with st.popover(f"Create {choice}"):
+            with st.form(f"{choice} form"):
+                asset_type = st.selectbox("Type:", ["Flat",
+                                                    "House", 
+                                                    "Condo", 
+                                                    "Shop", 
+                                                    "Townhouse", 
+                                                    "Bungalow", 
+                                                    "Other"])
+                asset_name = st.text_input("Name: ")
 
+
+                if asset_type == "Other":
+                    other_type = st.text_input("Enter other type:")
+                
+                #payload = {"name": asset_name, "type": asset_type}
+                payload = {
+                    "type": "house", 
+                    "name": "Cozy Cottage",
+                    "address": 1, 
+                    "is_active": "true",
+                    "status": "available",
+                    "payment_freq": "monthly",
+                    "default_rent": 1500.00
+                }
+
+                
+                if st.form_submit_button("Create"):
+                    create_backend_data(PROPERTIES_ENDPOINT, payload)
+                    
     if choice == "Properties":
         results = fetch_results()
         del_btn_counter = 0
