@@ -1,1 +1,1 @@
-rent management api built on django rest framework
+rent management api built on django rest framework [WIP]
