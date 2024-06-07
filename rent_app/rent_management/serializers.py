@@ -11,10 +11,14 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 # using fields = "__all__" instead of list of fields bc I want all fields
-class PropertySerializer(serializers.ModelSerializer):
+class PropertySerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name="rent_management:property-api-detail")
+    owner = serializers.ReadOnlyField(source="owner.username")
+    address = serializers.HyperlinkedRelatedField(view_name="rent_management:address-api-detail", queryset=Address.objects.all(), allow_null=True)
     class Meta:
         model = Property
-        fields = "__all__"
+        exclude = ["is_active"]
+ 
 
 
 class AddressSerializer(serializers.ModelSerializer):
