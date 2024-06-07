@@ -38,6 +38,11 @@ class RentalSerializer(serializers.HyperlinkedModelSerializer):
         model = Rental
         fields = "__all__"
 
+    def validate(self, attrs):
+        property = attrs.get("property")
+        if property.status != "available":
+            raise serializers.ValidationError("Property not available for rental.")
+        return super().validate(attrs)
 
 class TenantSerializer(serializers.ModelSerializer):
     class Meta:
