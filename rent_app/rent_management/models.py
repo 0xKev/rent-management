@@ -137,6 +137,16 @@ class Rental(models.Model):
 
         super().clean()
 
+    def save(self, *args, **kwargs):
+        # Used to only set fields only when a new Rental instance is being created
+        if not self.pk:
+            self.property.status = "rented"
+
+            if not self.rent:
+                self.rent = self.property.default_rent
+            self.property.save()
+        super().save(*args, **kwargs)
+
 
     def __str__(self):
         return f"{self.property.name} - ({self.property.type}: {self.tenant.first_name} {self.tenant.last_name}: {self.property.status})"
