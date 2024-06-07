@@ -29,7 +29,11 @@ class AddressSerializer(serializers.HyperlinkedModelSerializer):
         fields = "__all__"
 
 
-class RentalSerializer(serializers.ModelSerializer):
+class RentalSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name="rent_management:rental-api-detail")
+    owner = serializers.ReadOnlyField(source="owner.username")
+    property = serializers.HyperlinkedRelatedField(view_name="rent_management:property-api-detail", queryset=Property.objects.all())
+    tenant = serializers.HyperlinkedRelatedField(view_name="rent_management:tenant-api-detail", queryset=Tenant.objects.all())
     class Meta:
         model = Rental
         fields = "__all__"
