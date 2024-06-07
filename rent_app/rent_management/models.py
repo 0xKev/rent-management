@@ -115,6 +115,9 @@ class Rental(models.Model):
         ('quarterly', 'Quarterly'),
         ('annually', 'Anually'),
     )
+    owner = models.ForeignKey(User, related_name="rentals", on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
     tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
     lease_start_date = models.DateField(default=timezone.now)
