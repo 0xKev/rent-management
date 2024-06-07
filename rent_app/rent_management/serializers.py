@@ -1,6 +1,13 @@
 from rest_framework import serializers
 from django.db import transaction
-from .models import Property, Address, Rental, Tenant, Payment, Expense
+from .models import *
+from django.contrib.auth.models import User
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User 
+        fields = ["id", "username"]
 
 
 # using fields = "__all__" instead of list of fields bc I want all fields
