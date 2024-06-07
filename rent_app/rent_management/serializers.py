@@ -21,7 +21,9 @@ class PropertySerializer(serializers.HyperlinkedModelSerializer):
  
 
 
-class AddressSerializer(serializers.ModelSerializer):
+class AddressSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name="rent_management:address-api-detail")
+    owner = serializers.HyperlinkedIdentityField(view_name="rent_management:users-detail")
     class Meta:
         model = Address
         fields = "__all__"
