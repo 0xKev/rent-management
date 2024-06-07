@@ -197,7 +197,7 @@ class Expense(models.Model):
         super().clean()
 
     def __str__(self):
-        return f"{self.rental} (cost ${self.payment_amount})"
+        return f"{self.rental} ({self.repair_type} cost ${self.payment_amount})"
 
 class Payment(models.Model):
     rental = models.ForeignKey(Rental, on_delete=models.CASCADE)
