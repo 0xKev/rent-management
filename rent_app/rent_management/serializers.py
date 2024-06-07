@@ -44,7 +44,11 @@ class RentalSerializer(serializers.HyperlinkedModelSerializer):
             raise serializers.ValidationError("Property not available for rental.")
         return super().validate(attrs)
 
-class TenantSerializer(serializers.ModelSerializer):
+
+class TenantSerializer(serializers.HyperlinkedModelSerializer):
+    owner = serializers.ReadOnlyField(source="owner.username")
+    url = serializers.HyperlinkedIdentityField(view_name="rent_management:tenant-api-detail")
+    address = serializers.HyperlinkedIdentityField(view_name="rent_management:address-api-detail")
     class Meta:
         model = Tenant
         fields = "__all__"
