@@ -221,5 +221,11 @@ class Payment(models.Model):
         total = cls.objects.aggregate(Sum("payment_amount"))["payment_amount__sum"]
         return total
     
+    def clean(self):
+        if not self.property:
+            self.property = self.rental.property
+
+        super().clean()
+
     def __str__(self):
         return f"{self.rental} (profit ${self.payment_amount})"
