@@ -94,6 +94,9 @@ class ReferencePerson(models.Model):
         return f"{self.first_name} {self.last_name}"
 
 class Tenant(models.Model):
+    owner = models.ForeignKey(User, related_name="tenants", on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     first_name = models.CharField(max_length=10)
     last_name = models.CharField(max_length=10)
     phone_num = models.CharField(max_length=12, blank=True, null=True)
