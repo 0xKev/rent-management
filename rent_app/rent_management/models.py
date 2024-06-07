@@ -159,15 +159,18 @@ class Rental(models.Model):
 
 class Expense(models.Model):
     REPAIR_TYPES = (
-        ('repair', 'Repair'),
+        ('general_repair', 'Repair'),
         ('electric_repair', 'Electric Repair'),
         ('other', 'Other')
     )
-
-    rental = models.ForeignKey(Rental, on_delete=models.CASCADE)
-    repair_type = models.CharField(max_length=20, choices=REPAIR_TYPES, default='repair')
+    rental = models.ForeignKey(Rental, on_delete=models.CASCADE, blank=False, null=True)
+    owner = models.ForeignKey(User, related_name="expenses", on_delete=models.CASCADE)
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    repair_type = models.CharField(max_length=20, choices=REPAIR_TYPES, default='expenses')
     payment_amount = models.DecimalField(default=0.00, decimal_places=2, max_digits=10)
-    date_paid = models.DateField(default=timezone.now)
+    date_paid = models.DateField(default=timezone.now().date())
     description = models.CharField(max_length=50, blank=True, null=True)
 
     def get_total_expenses():
