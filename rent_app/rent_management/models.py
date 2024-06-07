@@ -191,6 +191,10 @@ class Expense(models.Model):
             self.property = self.rental.property
         super().save(*args, **kwargs)
 
+    def clean(self):
+        if not self.property:
+            self.property = self.rental.property
+        super().clean()
 
     def __str__(self):
         return f"{self.rental} (cost ${self.payment_amount})"
