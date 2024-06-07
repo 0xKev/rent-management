@@ -200,9 +200,13 @@ class Expense(models.Model):
         return f"{self.rental} ({self.repair_type} cost ${self.payment_amount})"
 
 class Payment(models.Model):
+    owner = models.ForeignKey(User, related_name="payments", on_delete=models.CASCADE)
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     rental = models.ForeignKey(Rental, on_delete=models.CASCADE)
     payment_amount = models.DecimalField(default=0.00, decimal_places=2, max_digits=10)
-    date_paid = models.DateField(default=timezone.now)
+    date_paid = models.DateField(default=timezone.now().date())
     description = models.CharField(max_length=50, blank=True, null=True)
 
     def get_total_payments():
