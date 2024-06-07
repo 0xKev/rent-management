@@ -32,6 +32,7 @@ class Address(models.Model):
 class Property(models.Model):
     class Meta:
         verbose_name_plural = "Properties" # used to have Property show up in admin page as properties and not propertys
+        ordering = ["owner"]
 
     PROPERTY_TYPE_CHOICES = (
         # left is actual value, right is shown value
@@ -57,9 +58,13 @@ class Property(models.Model):
         ('quarterly', 'Quarterly'),
         ('annually', 'Anually'),
     )
-    type = models.CharField(max_length=15, choices=PROPERTY_TYPE_CHOICES)
+
+    owner = models.ForeignKey(User, related_name="properties", on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    property_type = models.CharField(max_length=15, choices=PROPERTY_TYPE_CHOICES)
     other_type = models.CharField(max_length=50, null=True, blank=True) # only show when type is "other" for manual input 
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
     address = models.ForeignKey(Address, on_delete=models.CASCADE, null=True, blank=True) # cascade used to prevent orhpans of address class
     is_active = models.BooleanField(default=True)
     description = models.CharField(max_length=50, null=True, blank=True)
@@ -70,15 +75,9 @@ class Property(models.Model):
     def get_payment_freq(self):
         return self.payment_freq
     
-    def clean(self): # for data integrity when modifying existing Property objects
-        if self.pk is None: # check if clean() is being called during creation, return if true
-            return
-        if Rental.objects.filter(property=self).exists(): # check if any rental class property references this property 'self'
-            if self.status != 'rented':
-                raise ValidationError("Status can't be changed while property is rented.")
 
     def __str__(self):
-        return f"{self.name}: {self.type} - [{self.get_status_display()}]" 
+        return f"{self.name}: {self.property_type} - {self.get_status_display()}" 
         
 
 class ReferencePerson(models.Model):
