@@ -81,6 +81,9 @@ class Property(models.Model):
         
 
 class ReferencePerson(models.Model):
+    owner = models.ForeignKey(User, related_name="reference_persons", on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     first_name = models.CharField(max_length=10)
     last_name = models.CharField(max_length=10, blank=True, null=True)
     phone_num = models.CharField(max_length=12, blank=True, null=True)
