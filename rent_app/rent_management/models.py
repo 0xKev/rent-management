@@ -6,13 +6,16 @@ from django.core.exceptions import ValidationError
 
 # for token authentication #
 from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import User
 
 
 # Create your models here.
 class Address(models.Model):
     class Meta:
-        verbose_name_plural = "Addresses"
-
+        verbose_name_plural = "Addresses"   
+    owner = models.ForeignKey(User, related_name="addresses", on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     country = models.CharField(max_length=20,)
     state = models.CharField(max_length=20,)
     city = models.CharField(max_length=20,)
