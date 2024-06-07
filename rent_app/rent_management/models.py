@@ -4,6 +4,8 @@ from datetime import timedelta
 from django import forms
 from django.core.exceptions import ValidationError
 
+from django.db.models import Sum
+
 # for token authentication #
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
@@ -173,12 +175,17 @@ class Expense(models.Model):
     date_paid = models.DateField(default=timezone.now().date())
     description = models.CharField(max_length=50, blank=True, null=True)
 
-    def get_total_expenses():
-        try:
-            total = Expense.objects.all().aggregate(sum("payment_amount"))["payment_amount__sum"] or 0
-            return total
-        except:
+
+    @classmethod
+    def get_total_expenses(cls):
+        total_count = cls.objects.count()
+        if total_count == 0:
             return 0
+        
+        total = Expense.objects.aggregate(Sum("payment_amount"))["payment_amount__sum"]
+        return total
+        
+
 
     def __str__(self):
         return f"{self.rental} (cost ${self.payment_amount})"
