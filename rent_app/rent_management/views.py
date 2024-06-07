@@ -9,15 +9,17 @@ from django.db import transaction
 from .models import Property, Address, Rental, Tenant, Payment, Expense
 
 #### for Django Rest Framework
-from .serializers import PropertySerializer, AddressSerializer, RentalSerializer, TenantSerializer, TotalTransactionsSerializer, PaymentSerializer, ExpenseSerializer
+from .serializers import *
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
+from rest_framework.schemas import get_schema_view
+from rest_framework import permissions
 
 ### permissions.py for development and production ###
 from .permissions import DevelopmentModelPermission, get_custom_permissions
+from django.contrib.auth.models import User
 
-# Create your views here.
 class PropertyListView(generic.ListView):
     template_name = "rent_management/property_list.html"
     context_object_name = "properties"
@@ -101,6 +103,10 @@ def create_address(request):
     
     return render(request, 'rent_management/address_create.html', {'form': form})
     
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 class PropertyViewSet(viewsets.ModelViewSet):
     # DRF view handles the API requests
