@@ -132,24 +132,8 @@ class RentalViewSet(viewsets.ModelViewSet):
     queryset = Rental.objects.all()
     serializer_class = RentalSerializer
 
-    @transaction.non_atomic_requests
-    def create(self, request,  *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            # get property instance
-            property_data = serializer.validated_data.get('property')
-            property_id = property_data.id
-            property_obj = get_object_or_404(Property, id=property_id)
-
-            if property_obj.status == 'available':
-                rental = self.perform_create(serializer)
-                property_obj.status = 'rented' 
-                property_obj.save()
-
-                headers = self.get_success_headers(serializer.data)
-                return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-            else:
-                raise ValidationError("Property has already been rented!")
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
             
     def destroy(self, request, *args, **kwargs):
         rental_obj = self.get_object()
