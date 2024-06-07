@@ -209,12 +209,17 @@ class Payment(models.Model):
     date_paid = models.DateField(default=timezone.now().date())
     description = models.CharField(max_length=50, blank=True, null=True)
 
-    def get_total_payments():
-        try:
-            total = Payment.objects.all().aggregate(sum(("payment_amount")))["payment_amount__sum"] or 0
-            return total
-        except:
+    @classmethod
+    def get_total_payments(cls) -> float:
+        """
+        Returns total payments as a decimal
+        """
+        total_count = cls.objects.count()
+        if total_count == 0:
             return 0
+        
+        total = cls.objects.aggregate(Sum("payment_amount"))["payment_amount__sum"]
+        return total
     
     def __str__(self):
         return f"{self.rental} (profit ${self.payment_amount})"
