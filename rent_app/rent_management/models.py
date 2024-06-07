@@ -127,6 +127,17 @@ class Rental(models.Model):
     rental_freq = models.CharField(max_length=13, choices=BILLING_CYCLE, default="monthly")
     description = models.CharField(max_length=50, null=True, blank=True)
 
+    def clean(self):
+        # If lease start date greater than lease end date, set end date to start date plus lease duration
+        if self.lease_start_date >= self.lease_end_date:
+            self.lease_end_date = self.lease_start_date + self.lease_duration
+
+        if self.property.status != "available":
+            raise ValidationError("Only available properties can be rented!")
+
+        super().clean()
+
+
     def __str__(self):
         return f"{self.property.name} - ({self.property.type}: {self.tenant.first_name} {self.tenant.last_name}: {self.property.status})"
 
