@@ -73,6 +73,9 @@ class ExpenseSerializer(serializers.HyperlinkedModelSerializer):
         fields = ["url", "owner", "created", "updated", "rental", "property", "payment_amount", "date_paid", "description"]
 
 
-class TotalTransactionsSerializer(serializers.Serializer):
-    total_payment = serializers.DecimalField(max_digits=10, decimal_places=2)
+class TotalTransactionSerializer(serializers.Serializer):
+    properties = serializers.HyperlinkedRelatedField(many=True, view_name="rent_management:property-api-detail", queryset=Property.objects.all())
+    rentals = serializers.HyperlinkedRelatedField(many=True, view_name="rent_management:rental-api-detail", queryset=Rental.objects.all())
+    total_payments = serializers.DecimalField(max_digits=10, decimal_places=2)
     total_expenses = serializers.DecimalField(max_digits=10, decimal_places=2)
+
