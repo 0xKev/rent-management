@@ -147,6 +147,11 @@ class Rental(models.Model):
             self.property.save()
         super().save(*args, **kwargs)
 
+    def delete(self, *args, **kwargs):
+        self.property.status = "available"
+        self.property.save()
+        super().delete(*args, **kwargs)
+
 
     def __str__(self):
         return f"{self.property.name} - ({self.property.type}: {self.tenant.first_name} {self.tenant.last_name}: {self.property.status})"
