@@ -154,7 +154,8 @@ class Rental(models.Model):
 
 
     def __str__(self):
-        return f"{self.property.name} - ({self.property.type}: {self.tenant.first_name} {self.tenant.last_name}: {self.property.status})"
+        return f"{self.property.name} - ({self.property.property_type}: {self.tenant.first_name} {self.tenant.last_name}: {self.property.status})"
+
 
 class Expense(models.Model):
     REPAIR_TYPES = (
