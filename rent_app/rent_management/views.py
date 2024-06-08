@@ -18,7 +18,7 @@ from rest_framework import permissions
 
 ### permissions.py for development and production ###
 from .permissions import DevelopmentModelPermission, get_custom_permissions
-from django.contrib.auth.models import User
+from accounts.models import CustomUser
 
 class PropertyListView(generic.ListView):
     template_name = "rent_management/property_list.html"
@@ -105,7 +105,7 @@ def create_address(request):
     
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
 
 class PropertyViewSet(viewsets.ModelViewSet):
@@ -167,7 +167,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
 
 class TotalTransactionsViewSet(viewsets.ModelViewSet):
     queryset = None
-    serializer_class = TotalTransactionsSerializer
+    serializer_class = TotalTransactionSerializer
 
     def get_permissions(self):
         return get_custom_permissions(self.request)
@@ -176,7 +176,7 @@ class TotalTransactionsViewSet(viewsets.ModelViewSet):
         total_payments = Payment.get_total_payments()
         total_expenses = Expense.get_total_expenses()
 
-        serializer = TotalTransactionsSerializer(data={
+        serializer = TotalTransactionSerializer(data={
             "total_payments": total_payments,
             "total_expenses": total_expenses,
         })
