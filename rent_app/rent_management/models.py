@@ -8,14 +8,14 @@ from django.db.models import Sum
 
 # for token authentication #
 from rest_framework.authtoken.models import Token
-from django.contrib.auth.models import User
+from accounts.models import CustomUser
 
 
 # Create your models here.
 class Address(models.Model):
     class Meta:
         verbose_name_plural = "Addresses"   
-    owner = models.ForeignKey(User, related_name="addresses", on_delete=models.CASCADE)
+    owner = models.ForeignKey(CustomUser, related_name="addresses", on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     country = models.CharField(max_length=20,)
@@ -61,7 +61,7 @@ class Property(models.Model):
         ('annually', 'Anually'),
     )
 
-    owner = models.ForeignKey(User, related_name="properties", on_delete=models.CASCADE)
+    owner = models.ForeignKey(CustomUser, related_name="properties", on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     property_type = models.CharField(max_length=15, choices=PROPERTY_TYPE_CHOICES)
@@ -83,7 +83,7 @@ class Property(models.Model):
         
 
 class ReferencePerson(models.Model):
-    owner = models.ForeignKey(User, related_name="reference_persons", on_delete=models.CASCADE)
+    owner = models.ForeignKey(CustomUser, related_name="reference_persons", on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     first_name = models.CharField(max_length=10)
@@ -96,7 +96,7 @@ class ReferencePerson(models.Model):
         return f"{self.first_name} {self.last_name}"
 
 class Tenant(models.Model):
-    owner = models.ForeignKey(User, related_name="tenants", on_delete=models.CASCADE)
+    owner = models.ForeignKey(CustomUser, related_name="tenants", on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     first_name = models.CharField(max_length=10)
@@ -117,7 +117,7 @@ class Rental(models.Model):
         ('quarterly', 'Quarterly'),
         ('annually', 'Anually'),
     )
-    owner = models.ForeignKey(User, related_name="rentals", on_delete=models.CASCADE)
+    owner = models.ForeignKey(CustomUser, related_name="rentals", on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
@@ -166,7 +166,7 @@ class Expense(models.Model):
         ('other', 'Other')
     )
     rental = models.ForeignKey(Rental, on_delete=models.CASCADE, blank=False, null=True)
-    owner = models.ForeignKey(User, related_name="expenses", on_delete=models.CASCADE)
+    owner = models.ForeignKey(CustomUser, related_name="expenses", on_delete=models.CASCADE)
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -200,7 +200,7 @@ class Expense(models.Model):
         return f"{self.rental} ({self.repair_type} cost ${self.payment_amount})"
 
 class Payment(models.Model):
-    owner = models.ForeignKey(User, related_name="payments", on_delete=models.CASCADE)
+    owner = models.ForeignKey(CustomUser, related_name="payments", on_delete=models.CASCADE)
     property = models.ForeignKey(Property, on_delete=models.CASCADE, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
