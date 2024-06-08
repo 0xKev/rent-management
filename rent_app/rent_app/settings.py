@@ -11,6 +11,12 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+from os import getenv
+
+load_dotenv()
+USERNAME = getenv("USERNAME")
+PASSWORD = getenv("PASSWORD")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,7 +36,10 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+AUTH_USER_MODEL = "accounts.CustomUser"
+
 INSTALLED_APPS = [
+    'accounts.apps.AccountsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -79,8 +88,12 @@ WSGI_APPLICATION = 'rent_app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'rent_management_db',
+        'USER': USERNAME,
+        'PASSWORD': PASSWORD,
+        'HOST': 'localhost',
+        'PORT': ''
     }
 }
 
@@ -138,3 +151,4 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication', # used for token authentication, not implemented yet
     ],
 }
+
