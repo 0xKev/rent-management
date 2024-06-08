@@ -135,11 +135,10 @@ class RentalViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
             
-    def destroy(self, request, *args, **kwargs):
-        rental_obj = self.get_object()
-        rental_obj.property.status = "available"
-        rental_obj.property.save()
-        rental_obj.delete()
+    def perform_destroy(self, instance):
+        instance.property.status = "available"
+        instance.property.save()
+        instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
     def get_permissions(self):
