@@ -172,6 +172,9 @@ class ExpenseViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         return get_custom_permissions(self.request)
+    
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 class TotalTransactionsViewSet(viewsets.ModelViewSet):
     queryset = None
