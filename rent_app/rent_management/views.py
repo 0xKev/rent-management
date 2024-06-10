@@ -152,6 +152,9 @@ class TenantViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         return get_custom_permissions(self.request)
+    
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.all()
