@@ -147,6 +147,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication', # used for browsable API login page
         'rest_framework.authentication.TokenAuthentication', # used for token authentication, not implemented yet
     ],
