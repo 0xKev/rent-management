@@ -15,6 +15,8 @@ class PropertySerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="rent_management:property-api-detail")
     owner = serializers.ReadOnlyField(source="owner.username")
     address = serializers.HyperlinkedRelatedField(view_name="rent_management:address-api-detail", queryset=Address.objects.all(), allow_null=True)
+    rental_set = serializers.HyperlinkedIdentityField(view_name="rent_management:rental-api-detail", read_only=True, allow_null=True, many=True)
+
     class Meta:
         model = Property
         exclude = ["is_active"]
