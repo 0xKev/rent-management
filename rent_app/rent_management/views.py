@@ -112,14 +112,13 @@ class PropertyViewSet(viewsets.ModelViewSet):
     # DRF view handles the API requests
     queryset = Property.objects.all()
     serializer_class = PropertySerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_permissions(self):
         return get_custom_permissions(self.request)
     
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
-    
+
 
 class AddressViewSet(viewsets.ModelViewSet):
     queryset = Address.objects.all()
