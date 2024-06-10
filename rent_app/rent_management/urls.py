@@ -11,6 +11,7 @@ router.register(r'tenants', views.TenantViewSet, basename="tenant-api")
 router.register(r'finances', views.TotalTransactionsViewSet, basename="total-api")
 router.register(r'payments', views.PaymentViewSet, basename="payment-api")
 router.register(r'expenses', views.ExpenseViewSet, basename="expense-api")
+router.register(r'users', views.UserViewSet, basename="users-api")
 
 app_name = "rent_management"
 urlpatterns = [
