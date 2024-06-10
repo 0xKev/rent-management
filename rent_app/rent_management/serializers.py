@@ -58,10 +58,11 @@ class TenantSerializer(serializers.HyperlinkedModelSerializer):
 class PaymentSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="rent_management:payment-api-detail")
     owner = serializers.ReadOnlyField(source="owner.username")
-    rental = serializers.HyperlinkedRelatedField(view_name="rent_management:rental-api-detail", queryset=Rental.objects.all())
+    rental = serializers.HyperlinkedRelatedField(view_name="rent_management:rental-api-detail", queryset=Rental.objects.all(), allow_null=True)
+    property = serializers.HyperlinkedRelatedField(view_name="rent_management:property-api-detail", queryset=Property.objects.all())
     class Meta:
         model = Payment
-        fields = ["url", "owner", "created", "updated", "rental", "payment_amount", "date_paid", "description"]
+        fields = ["url", "owner", "created", "updated", "rental", "property", "payment_amount", "date_paid", "description", ]
 
 
 class ExpenseSerializer(serializers.HyperlinkedModelSerializer):
