@@ -30,6 +30,8 @@ class Address(models.Model):
                  {self.line2}\n\
                  {self.city} {self.state} {self.zipcode}\n\
                  {self.country}"
+    
+
 # MAKE SURE PROPERTY CAN ONLY BE RENTED ONCE! IF STATUS == RENTED, CAN'T CREATE RENTAL WITH IT
 class Property(models.Model):
     class Meta:
@@ -158,7 +160,6 @@ class Rental(models.Model):
     def __str__(self):
         return f"{self.property.name} - ({self.property.property_type}: {self.tenant.first_name} {self.tenant.last_name}: {self.property.status})"
 
-
 class Expense(models.Model):
     REPAIR_TYPES = (
         ('general_repair', 'Repair'),
@@ -226,6 +227,11 @@ class Payment(models.Model):
             self.property = self.rental.property
 
         super().clean()
+
+    def save(self, *args, **kwargs):
+        if self.rental:
+            self.property = self.rental.property
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.rental} (profit ${self.payment_amount})"
